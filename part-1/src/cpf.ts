@@ -1,51 +1,41 @@
-
 export default class CPF {
 
-    cpf: string;
+    readonly rawCPF: string;
 
     constructor(cpf: string) {
-        this.cpf = cpf
+        this.rawCPF = cpf.replace(/\D*/g, '');
     }
 
     validate(): boolean {
+        if (!this.rawCPF) return false;
+        if(this.#hasNotElevenDigits()) return false;
+        if(this.#isAllEqualDigits()) return false;
+        return this.#hasValidVerificationDigits()
+    }
 
-        const FACTOR_DIGIT_1 = 10;
-        const FACTOR_DIGIT_2 = 11;
+    #hasNotElevenDigits(): boolean {
+        return this.rawCPF.length != 11
+    }
 
-        const cleanCpf = function (cpf: any) {
-            return cpf.replace(/[\.\-]/g, "");
-        }
+    #isAllEqualDigits(): boolean {
+        return this.rawCPF.split('').every(item => item === this.rawCPF[0])
+    }
 
-        const isValidLength = function (cpf: any) {
-            return cpf.length === 11;
-        }
+    #hasValidVerificationDigits(): boolean {
+        let cpfWithoutVerificationDigits = this.rawCPF.slice(0, 9);
+        const firstVerificationDigit = this.#calculateVerificationDigitFor(cpfWithoutVerificationDigits);
+        const secondVerificationDigit = this.#calculateVerificationDigitFor(`${cpfWithoutVerificationDigits}${firstVerificationDigit}`);
+        const originalVerificationDigits = this.rawCPF.slice(9, 11);
+        return `${firstVerificationDigit}${secondVerificationDigit}` == originalVerificationDigits;
+    }
 
-        const hasAllDigitsEqual = function (cpf: any) {
-            const [firstDigit] = cpf;
-            return [...cpf].every(digit => digit === firstDigit);
-        }
-
-        const calculateCheckDigit = function (cpf: any, factor: number) {
-            let total = 0;
-            for (const digit of cpf) {
-                if (factor > 1) total += digit * factor--;
-            }
-            const rest = total%11;
-            return (rest < 2) ? 0 : (11 - rest);
-        }
-
-        const extractCheckDigit = function (cpf: any) {
-            return cpf.slice(-2);
-        }
-
-        if (!this.cpf) return false;
-        this.cpf = cleanCpf(this.cpf);
-        if (!isValidLength(this.cpf)) return false;
-        if (hasAllDigitsEqual(this.cpf)) return false;
-        const digit1 = calculateCheckDigit(this.cpf, FACTOR_DIGIT_1);
-        const digit2 = calculateCheckDigit(this.cpf, FACTOR_DIGIT_2);
-        let checkDigit = extractCheckDigit(this.cpf);
-        const calculatedDigit = `${digit1}${digit2}`;
-        return checkDigit == calculatedDigit;
+    #calculateVerificationDigitFor(input: string): number {
+        const verificationNumber = input.split('')
+            .reverse()
+            .reduce((acumulator: number, currentValue: string, index: number) => {
+            return acumulator += Number(currentValue) * (index + 2)
+        }, 0);
+        if ((verificationNumber % 11) < 2) return 0;
+        return 11 - (verificationNumber % 11);
     }
 }
