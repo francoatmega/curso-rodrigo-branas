@@ -1,4 +1,5 @@
 import CPF from './cpf';
+import Cupon from './cupon';
 export default class Order {
 
     cpf: string;
@@ -10,6 +11,12 @@ export default class Order {
 
     addItem(item: Object): void {
         this.items.push(item)
+    }
+
+    calculateDiscount(cuponCode: string): number {
+        const amount = this.items.reduce((acc: number, item: any) => acc += item.price * item.quantity, 0)
+        const cupon = new Cupon(cuponCode, amount)
+        return cupon.calculate()
     }
 
     book(): string | void {
