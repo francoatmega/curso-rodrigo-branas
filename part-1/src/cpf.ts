@@ -9,7 +9,7 @@ export default class CPF {
     validate(): boolean {
         if (!this.rawCPF) return false;
         if(this.#hasNotElevenDigits()) return false;
-        if(this.#isAllEqualDigits()) return false;
+        if(this.#hasAllEqualDigits()) return false;
         return this.#hasValidVerificationDigits()
     }
 
@@ -17,7 +17,7 @@ export default class CPF {
         return this.rawCPF.length != 11
     }
 
-    #isAllEqualDigits(): boolean {
+    #hasAllEqualDigits(): boolean {
         return this.rawCPF.split('').every(item => item === this.rawCPF[0])
     }
 
