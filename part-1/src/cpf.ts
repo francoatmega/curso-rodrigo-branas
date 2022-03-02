@@ -18,7 +18,8 @@ export default class CPF {
     }
 
     #hasAllEqualDigits(): boolean {
-        return this.rawCPF.split('').every(item => item === this.rawCPF[0])
+        const [ firstElement ] = this.rawCPF
+        return [ ...this.rawCPF ].every(digit => digit === firstElement)
     }
 
     #hasValidVerificationDigits(): boolean {
@@ -30,12 +31,13 @@ export default class CPF {
     }
 
     #calculateVerificationDigitFor(input: string): number {
-        const verificationNumber = input.split('')
+        const verificationNumber = [ ...input ]
             .reverse()
             .reduce((acumulator: number, currentValue: string, index: number) => {
-            return acumulator += Number(currentValue) * (index + 2)
+                return acumulator += Number(currentValue) * (index + 2)
         }, 0);
-        if ((verificationNumber % 11) < 2) return 0;
-        return 11 - (verificationNumber % 11);
+        const restOfDivision = verificationNumber % 11
+        if (restOfDivision < 2) return 0;
+        return 11 - restOfDivision;
     }
 }
