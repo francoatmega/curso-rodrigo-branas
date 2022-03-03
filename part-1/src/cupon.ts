@@ -6,6 +6,8 @@ export default class Cupon {
     constructor(cupon: string, amount: number) {
         this.cupon = cupon;
         this.amount = amount;
+
+        if(!this.isValidCupon()) throw new Error(`Cupon ${this.cupon} has expired!`)
     }
 
     calculate(): number {
@@ -21,5 +23,9 @@ export default class Cupon {
             type: 'percent',
             value: 25
         }
+    }
+
+    isValidCupon(): boolean {
+        return true
     }
 }

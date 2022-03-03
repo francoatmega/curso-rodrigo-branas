@@ -1,5 +1,6 @@
 import CPF from './cpf';
 import Cupon from './cupon';
+
 export default class Order {
 
     cpf: string;
