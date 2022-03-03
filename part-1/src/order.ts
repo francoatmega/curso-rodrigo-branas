@@ -1,5 +1,6 @@
 import CPF from './cpf';
 import Cupon from './cupon';
+import Freight from './freight';
 
 export default class Order {
 
@@ -18,6 +19,11 @@ export default class Order {
         const amount = this.items.reduce((acc: number, item: any) => acc += item.price * item.quantity, 0)
         const cupon = new Cupon(cuponCode, amount)
         return cupon.calculate()
+    }
+
+    calculateFreight(): string {
+        const freight = new Freight(this.items)
+        return freight.calculate()
     }
 
     book(): string | void {

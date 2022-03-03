@@ -87,3 +87,59 @@ test('Should throw and exception when applying a expired cupon', function () {
     Cupon.prototype.isValidCupon = jest.fn(() => false)
     expect(() => newOrder.calculateDiscount('BLACKFRIDAY50OFF')).toThrow('Cupon BLACKFRIDAY50OFF has expired!')
 })
+
+test('Should calculate the freight of an order', function () {
+    const newOrder = new Order('059.970.943.08')
+    newOrder.addItem({
+        description: 'Sunglasses',
+        price: 89.00,
+        quantity: 2,
+        dimensions: {
+            height: 5,
+            width: 14,
+            depth: 3,
+        },
+        weight: 0.200
+    })
+    newOrder.addItem({
+        description: 'Hat',
+        price: 139.00,
+        quantity: 2,
+        dimensions: {
+            height: 25,
+            width: 25,
+            depth: 25,
+        },
+        weight: 0.450
+    })
+    newOrder.addItem({
+        description: 'T-shirt',
+        price: 59.00,
+        quantity: 6,
+        dimensions: {
+            height: 120,
+            width: 75,
+            depth: 1,
+        },
+        weight: 0.250
+    })
+    const freightValue = newOrder.calculateFreight()
+    expect(freightValue).toBe("28,00")
+})
+
+test('Should calculate the freight of an order and have the minimum freight value', function () {
+    const newOrder = new Order('059.970.943.08')
+    newOrder.addItem({
+        description: 'Sunglasses',
+        price: 89.00,
+        quantity: 1,
+        dimensions: {
+            height: 5,
+            width: 14,
+            depth: 3,
+        },
+        weight: 0.200
+    })
+    const freightValue = newOrder.calculateFreight()
+    expect(freightValue).toBe("10,00")
+})
